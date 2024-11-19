@@ -1,0 +1,2 @@
+dtoverlay=iqaudio-dacplus,auto_mute_amp
+dtoverlay=gpio-shutdown,gpio_pin=26
