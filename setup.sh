@@ -3,11 +3,9 @@
 
 
 CONFIG_FILE="/boot/firmware/config.txt"
-#CONFIG_FILE="./test/config.txt"
 RASPOTIFY_FILE="/etc/raspotify/conf"
-#RASPOTIFY_FILE="./test/conf"
 RASPOTIFY_NAME="Pi Speaker"
-
+BT_NAME="Pi Speaker BT"
 
 echo "[raspi-hifi] Downloading files"
 sudo apt-get -y install curl
@@ -79,6 +77,9 @@ systemctl --user enable speaker-agent.service
 
 sudo sed -i 's/#JustWorksRepairing.*/JustWorksRepairing = always/' /etc/bluetooth/main.conf
 
+echo "[raspi-hifi] Changing name to $BT_NAME"
+bluetoothctl system-alias "$BT_NAME"
+
 echo "[raspi-hifi] Settings default volume"
 sink_id=$(get_sink)
 echo "[raspi-hifi] Sink id: $sink_id"
@@ -96,3 +97,6 @@ sudo sed -i "s/#LIBRESPOT_NAME=.*/LIBRESPOT_NAME=\"${RASPOTIFY_NAME}\"/g" "${RAS
 sudo sed -i 's/#LIBRESPOT_BITRATE=.*/LIBRESPOT_BITRATE="320"/g' "${RASPOTIFY_FILE}"
 
 echo "[raspi-hifi] Installation completed..."
+echo "[raspi-hifi] Please restart Pi to run raspi-hifi..."
+
+
