@@ -8,6 +8,15 @@ RASPOTIFY_FILE="/etc/raspotify/conf"
 #RASPOTIFY_FILE="./test/conf"
 RASPOTIFY_NAME="Pi Speaker"
 
+
+echo ">>> Downloading files"
+sudo apt-get -y install curl
+curl -sSL https://raw.githubusercontent.com/skuligowski/raspi-hifi/refs/heads/main/piconfig.txt -o piconfig.txt
+curl -sSL https://raw.githubusercontent.com/skuligowski/raspi-hifi/refs/heads/main/speaker-agent.py -o speaker-agent.py
+curl -sSL https://raw.githubusercontent.com/skuligowski/raspi-hifi/refs/heads/main/speaker-agent.service -o speaker-agent.service
+
+echo "[pi] Download completed"
+
 create_backup() {
   configfile=$(basename -- "$1")
   configext="${configfile##*.}"
@@ -78,7 +87,7 @@ wpctl status
 
 echo ">>> Installing Raspotify..."
 
-sudo apt-get -y install curl && curl -sL https://dtcooper.github.io/raspotify/install.sh | sh
+sudo curl -sL https://dtcooper.github.io/raspotify/install.sh | sh
 
 echo ">>> Configuring Raspotify..."
 
