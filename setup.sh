@@ -56,12 +56,12 @@ do
    found=$(grep "^$line" "$CONFIG_FILE")
    if [ -z $found ]; then
     if [ $allheader = false ]; then
-      sudo echo "" >> "$CONFIG_FILE"
-      sudo echo "[all]" >> "$CONFIG_FILE"
+      echo "" | sudo tee -a "$CONFIG_FILE"
+      echo "[all]" | sudo tee -a "$CONFIG_FILE"
       allheader=true
     fi
-    sudo echo "[pi] adding $line"
-    sudo echo "$line" >> "$CONFIG_FILE"
+    echo "[pi] adding $line"
+    echo "$line" | sudo tee -a "$CONFIG_FILE"
   fi
 done
 
