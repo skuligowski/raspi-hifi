@@ -83,7 +83,7 @@ echo "Settings default volumen"
 sink_id=$(get_sink)
 echo "Sink id: $sink_id"
 wpctl set-volume $sink_id 80%
-wpctl status
+wpctl status | grep $sink_id
 
 echo ">>> Installing Raspotify..."
 
@@ -92,6 +92,6 @@ sudo curl -sL https://dtcooper.github.io/raspotify/install.sh | sh
 echo ">>> Configuring Raspotify..."
 
 create_backup $RASPOTIFY_FILE
-sed -i "s/#LIBRESPOT_NAME=.*/LIBRESPOT_NAME=\"${RASPOTIFY_NAME}\"/g" "${RASPOTIFY_FILE}"
-sed -i 's/#LIBRESPOT_BITRATE=.*/LIBRESPOT_BITRATE="320"/g' "${RASPOTIFY_FILE}"
+sudo sed -i "s/#LIBRESPOT_NAME=.*/LIBRESPOT_NAME=\"${RASPOTIFY_NAME}\"/g" "${RASPOTIFY_FILE}"
+sudo sed -i 's/#LIBRESPOT_BITRATE=.*/LIBRESPOT_BITRATE="320"/g' "${RASPOTIFY_FILE}"
 
