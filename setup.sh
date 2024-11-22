@@ -9,20 +9,20 @@ RASPOTIFY_FILE="/etc/raspotify/conf"
 RASPOTIFY_NAME="Pi Speaker"
 
 
-echo ">>> Downloading files"
+echo "[raspi-hifi] Downloading files"
 sudo apt-get -y install curl
 curl -sSL https://raw.githubusercontent.com/skuligowski/raspi-hifi/refs/heads/main/piconfig.txt -o piconfig.txt
 curl -sSL https://raw.githubusercontent.com/skuligowski/raspi-hifi/refs/heads/main/speaker-agent.py -o speaker-agent.py
 curl -sSL https://raw.githubusercontent.com/skuligowski/raspi-hifi/refs/heads/main/speaker-agent.service -o speaker-agent.service
 
-echo "[pi] Download completed"
+echo "[raspi-hifi] Download completed"
 
 create_backup() {
   configfile=$(basename -- "$1")
   configext="${configfile##*.}"
   configbase="${configfile%.*}"
   configbak="bak/$configbase.$configext.bak"
-  echo "[pi] creating backup $1 -> $configbak"
+  echo "[raspi-hifi] creating backup $1 -> $configbak"
   mkdir -p bak && sudo cp $1 $configbak
 }
 
@@ -38,16 +38,16 @@ get_sink() {
   sed 's/^.* \([[:digit:]]*\)\. \(.*\) \[.*$/\1/'
 }
 
-echo ">>> Configuring IQAudio PiAmp in $CONFIG_FILE..."
+echo "[raspi-hifi] Configuring IQAudio PiAmp in $CONFIG_FILE..."
 
 if [ ! -f "$CONFIG_FILE" ]; then
-  echo "Error: $CONFIG_FILE not found."
+  echo "[raspi-hifi] Error: $CONFIG_FILE not found."
   exit 1
 fi
 
 create_backup $CONFIG_FILE
 
-echo "[pi] disabling dtparam=audio=on"
+echo "[raspi-hifi] disabling dtparam=audio=on"
 sudo sed -i 's/^dtparam=audio=on/#dtparam=audio=on/' "$CONFIG_FILE"
 
 allheader=false
@@ -60,13 +60,13 @@ do
       echo "[all]" | sudo tee -a "$CONFIG_FILE"
       allheader=true
     fi
-    echo "[pi] adding $line"
+    echo "[raspi-hifi] adding $line"
     echo "$line" | sudo tee -a "$CONFIG_FILE"
   fi
 done
 
 
-echo ">>> Installing Pipewire and Wireplumber"
+echo "[raspi-hifi] Installing Pipewire and Wireplumber"
 
 sudo apt update
 sudo apt -t bookworm install pipewire wireplumber libspa-0.2-bluetooth
@@ -79,19 +79,20 @@ systemctl --user enable speaker-agent.service
 
 sudo sed -i 's/#JustWorksRepairing.*/JustWorksRepairing = always/' /etc/bluetooth/main.conf
 
-echo "Settings default volumen"
+echo "[raspi-hifi] Settings default volume"
 sink_id=$(get_sink)
-echo "Sink id: $sink_id"
+echo "[raspi-hifi] Sink id: $sink_id"
 wpctl set-volume $sink_id 80%
 wpctl status | grep $sink_id
 
-echo ">>> Installing Raspotify..."
+echo "[raspi-hifi] Installing Raspotify..."
 
 sudo curl -sL https://dtcooper.github.io/raspotify/install.sh | sh
 
-echo ">>> Configuring Raspotify..."
+echo "[raspi-hifi] Configuring Raspotify..."
 
 create_backup $RASPOTIFY_FILE
 sudo sed -i "s/#LIBRESPOT_NAME=.*/LIBRESPOT_NAME=\"${RASPOTIFY_NAME}\"/g" "${RASPOTIFY_FILE}"
 sudo sed -i 's/#LIBRESPOT_BITRATE=.*/LIBRESPOT_BITRATE="320"/g' "${RASPOTIFY_FILE}"
 
+echo "[raspi-hifi] Installation completed..."
