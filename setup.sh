@@ -23,7 +23,7 @@ create_backup() {
   configbase="${configfile%.*}"
   configbak="bak/$configbase.$configext.bak"
   echo "[pi] creating backup $1 -> $configbak"
-  mkdir -p bak && cp $1 $configbak
+  mkdir -p bak && sudo cp $1 $configbak
 }
 
 get_sink() {
